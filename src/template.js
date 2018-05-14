@@ -4,17 +4,17 @@
 
 'use strict';
 
-const { URL } = require('url');
-const { stat, readFile } = require('fs');
-const path = require('path');
-const { promisify } = require('util');
-const { join } = require('path');
 const colorString = require('color-string');
-const http2 = require('http2'); // eslint-disable-line
 const decodePrivateKey = require('./lib/decodePrivateKey');
+const http2 = require('http2');
+const path = require('path');
+const { join } = require('path');
+const { promisify } = require('util');
+const { stat, readFile } = require('fs');
+const { URL } = require('url');
 
-const PassImages = require('./lib/images');
 const Pass = require('./pass');
+const PassImages = require('./lib/images');
 const { PASS_STYLES } = require('./constants');
 
 const readFileAsync = promisify(readFile);
@@ -46,8 +46,8 @@ class Template {
     this.keysPath = 'keys';
     this.password = null;
     this.apn = null;
-	this.images = new PassImages();
-	this.identifierCert = null;
+    this.images = new PassImages();
+    this.identifierCert = null;
     Object.preventExtensions(this);
   }
 
@@ -58,11 +58,13 @@ class Template {
       // creating APN Provider
       const identifier = this.passTypeIdentifier().replace(/^pass./, '');
 
-      const cert = this.identifierCert || await readFileAsync(
-        path.resolve(this.keysPath, `${identifier}.pem`),
-        'utf8',
-      );
-	  
+      const cert =
+        this.identifierCert ||
+        (await readFileAsync(
+          path.resolve(this.keysPath, `${identifier}.pem`),
+          'utf8',
+        ));
+
       const key = decodePrivateKey(cert, this.password, true);
 
       this.apn = http2.connect('https://api.push.apple.com:443', {
@@ -107,7 +109,7 @@ class Template {
 
   /**
    * Validates if given string is a correct color value for Pass fields
-   * 
+   *
    * @static
    * @param {string} value - a CSS color value, like 'red', '#fff', etc
    * @throws - if value is invalid this function will throw
@@ -203,8 +205,8 @@ class Template {
 
   /**
    * sets or gets suppressStripShine
-   * 
-   * @param {boolean?} v 
+   *
+   * @param {boolean?} v
    * @returns {Template | boolean}
    * @memberof Template
    */
@@ -220,8 +222,8 @@ class Template {
 
   /**
    * gets or sets webServiceURL
-   * 
-   * @param {URL | string} v 
+   *
+   * @param {URL | string} v
    * @returns {Template | string}
    * @memberof Template
    */
@@ -239,7 +241,7 @@ class Template {
 
   /**
    * Sets path to directory containing keys and password for accessing keys.
-   * 
+   *
    * @param {string} path - Path to directory containing key files (default is 'keys')
    * @param {string} password - Password to use with keys
    * @memberof Template
@@ -249,11 +251,10 @@ class Template {
     if (password) this.password = password;
   }
 
-    /**
-   * Sets path to directory containing keys and password for accessing keys.
-   * 
-   * @param {string} path - Path to directory containing key files (default is 'keys')
-   * @param {string} password - Password to use with keys
+  /**
+   * Sets certificate to be used for signing delegating certificate loading to implementation.
+   *
+   * @param {string} cert - certificate loaded in externally
    * @memberof Template
    */
   loadIdentifierCert(cert) {
@@ -262,8 +263,8 @@ class Template {
 
   /**
    * Create a new pass from a template.
-   * 
-   * @param {Object} fields 
+   *
+   * @param {Object} fields
    * @returns {Pass}
    * @memberof Template
    */
@@ -274,16 +275,16 @@ class Template {
 
   /**
    * Loads Template, images and key from a given path
-   * 
+   *
    * @static
-   * @param {string} folderPath 
+   * @param {string} folderPath
    * @param {string} keyPassword - optional key password
    * @returns {Template}
    * @throws - if given folder doesn't contain pass.json or it is's in invalid format
    * @memberof Template
    */
   static async load(folderPath, keyPassword) {
-	// Check if the path is accessible directory actually
+    // Check if the path is accessible directory actually
     const stats = await statAsync(folderPath);
     if (!stats.isDirectory())
       throw new Error(`Path ${folderPath} must be a directory!`);

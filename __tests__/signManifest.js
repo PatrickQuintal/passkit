@@ -48,7 +48,7 @@ test('signManifest from Var with password', async () => {
 
 test('signManifest from Var without password', async () => {
   const signerCertData = await readFileAsync(
-    path.resolve(__dirname, '../keys/com.example.passbook.pem'),
+    path.resolve(__dirname, '../keys/com.example.passbook-no-pass.pem'),
     'utf8',
   );
 
