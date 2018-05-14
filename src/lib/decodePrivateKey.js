@@ -14,10 +14,10 @@ function decodePrivateKey(keydata, password, returnPEM = false) {
     throw new Error('Invalid certificate, no key found');
   }
 
-  const key = forge.pki.decryptRsaPrivateKey(
+  const key = password ? forge.pki.decryptRsaPrivateKey(
     forge.pem.encode(signerKeyMessage),
     password,
-  );
+  ) : forge.pem.encode(signerKeyMessage);
 
   if (!key) {
     if (

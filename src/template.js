@@ -46,7 +46,8 @@ class Template {
     this.keysPath = 'keys';
     this.password = null;
     this.apn = null;
-    this.images = new PassImages();
+	this.images = new PassImages();
+	this.identifierCert = null;
     Object.preventExtensions(this);
   }
 
@@ -57,11 +58,11 @@ class Template {
       // creating APN Provider
       const identifier = this.passTypeIdentifier().replace(/^pass./, '');
 
-      const cert = await readFileAsync(
+      const cert = this.identifierCert || await readFileAsync(
         path.resolve(this.keysPath, `${identifier}.pem`),
         'utf8',
       );
-
+	  
       const key = decodePrivateKey(cert, this.password, true);
 
       this.apn = http2.connect('https://api.push.apple.com:443', {
@@ -248,6 +249,17 @@ class Template {
     if (password) this.password = password;
   }
 
+    /**
+   * Sets path to directory containing keys and password for accessing keys.
+   * 
+   * @param {string} path - Path to directory containing key files (default is 'keys')
+   * @param {string} password - Password to use with keys
+   * @memberof Template
+   */
+  loadIdentifierCert(cert) {
+    if (cert) this.identifierCert = cert;
+  }
+
   /**
    * Create a new pass from a template.
    * 
@@ -271,7 +283,7 @@ class Template {
    * @memberof Template
    */
   static async load(folderPath, keyPassword) {
-    // Check if the path is accessible directory actually
+	// Check if the path is accessible directory actually
     const stats = await statAsync(folderPath);
     if (!stats.isDirectory())
       throw new Error(`Path ${folderPath} must be a directory!`);
