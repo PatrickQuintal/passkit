@@ -14,10 +14,12 @@ const TEST_STRING = randomBytes(1024).toString('base64');
 
 const readFileAsync = promisify(readFile);
 
+const password = `secret`;
+
 test('signManifest from Path with password', async () => {
   const jsSignedBuffer = await signManifestFromPath(
     path.resolve(__dirname, '../keys/com.example.passbook.pem'),
-    'secret',
+    password,
     TEST_STRING,
   );
   expect(Buffer.isBuffer(jsSignedBuffer)).toBeTruthy();
@@ -40,7 +42,7 @@ test('signManifest from Var with password', async () => {
 
   const jsSignedBuffer = await signManifestFromVar(
     signerCertData,
-    'secret',
+    password,
     TEST_STRING,
   );
   expect(Buffer.isBuffer(jsSignedBuffer)).toBeTruthy();
